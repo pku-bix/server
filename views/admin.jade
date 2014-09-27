@@ -1,0 +1,95 @@
+extends layout
+
+block content
+  link(rel="stylesheet" href="/stylesheets/admin.css")
+
+  div(class="navbar navbar-default navbar-static-top" role="navigation")
+    div(class="container")
+      div(class="navbar-header")
+        button(type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse")
+          span(class="sr-only") Toggle navigation
+          span(class="icon-bar")
+          span(class="icon-bar")
+          span(class="icon-bar")
+        a(class="navbar-brand" href="#") #{title}
+      div(class="navbar-collapse collapse")
+        ul(class="nav navbar-nav")
+        ul(class="nav navbar-nav navbar-right")
+          li
+            a(href="#") #{user.username}
+          li
+            a(href="/logout") 退出
+
+  div(class="container")
+
+    span(class="hidden") #{apiToken}
+
+    h2(class="page-header") 管理员用户
+    table(class="table table-striped")
+      thead
+        tr
+          td 用户名
+          td 位置
+          td 经纬度
+          td 电话
+          td 操作
+      tbody
+        if normalUsers
+          each user in adminUsers
+            tr
+              td= user.username
+              td= user.pile.location
+              td= user.pile.longitude + ',' + user.pile.latitude
+              td= user.phone
+              td
+                a(class="btn btn-warning btn-xs mod") 修改
+                a(class="btn btn-danger btn-xs mod") 删除
+    a(class="btn btn-primary pull-right add") 添加
+    div(class="clearfix")
+
+    h2(class="page-header") 超级充电桩
+    table(class="table table-striped")
+      thead
+        tr
+          td 名称
+          td 位置
+          td 经纬度
+          td 电话
+          td 操作
+      tbody
+        if pileUsers
+          each user in pileUsers
+            tr
+              td= user.username
+              td= user.pile.location
+              td= user.pile.longitude + ',' + user.pile.latitude
+              td= user.phone
+              td
+                a(class="btn btn-warning btn-xs mod") 修改
+                a(class="btn btn-danger btn-xs mod") 删除
+    a(class="btn btn-primary pull-right add") 添加
+    div(class="clearfix")
+
+    h2(class="page-header") 普通用户
+    table(class="table table-striped")
+      thead
+        tr
+          td 用户名
+          td 位置
+          td 经纬度
+          td 电话
+          td 操作
+      tbody
+        if normalUsers
+          each user in normalUsers
+            tr
+              td= user.username
+              td= user.pile.location
+              td= user.pile.longitude + ',' + user.pile.latitude
+              td= user.phone
+              td
+                a(class="btn btn-warning btn-xs mod") 修改
+                a(class="btn btn-danger btn-xs mod") 删除
+    a(class="btn btn-primary pull-right add") 添加
+    div(class="clearfix")
+

@@ -1,0 +1,27 @@
+extends layout
+
+block content
+
+  link(rel="stylesheet",href="/stylesheets/home.css")
+
+  div(class="site-wrapper")
+    div(class="site-wrapper-inner")
+      div(class="container")
+
+        form(class="form-signin" method="post" role="form")
+          h2(class="form-signin-heading") 登录到
+            a(href="/") Bix
+
+          input(type="text" name="username" class="form-control" placeholder="User name" required autofocus)
+
+          input(type="password" name="password" class="form-control" placeholder="Password" required)
+
+          if error && error.message
+            div(class="alert alert-danger alert-dismissible" role="alert")
+              button(type="button" class="close" data-dismiss="alert")
+                span(aria-hidden="true") &times;
+                span(class="sr-only") Close
+              strong #{error.message}
+
+          button(class="btn btn-lg btn-primary btn-block" type="submit") 登录
+

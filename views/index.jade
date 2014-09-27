@@ -1,0 +1,27 @@
+extends layout
+
+block content
+
+  link(rel="stylesheet",href="/stylesheets/home.css")
+
+  div(class="site-wrapper")
+      div(class="site-wrapper-inner")
+        div(class="cover-container")
+          div(class="masthead clearfix")
+            div(class="inner")
+              h3(class="masthead-brand") Bix
+              ul(class="nav masthead-nav")
+                li(class="active")
+                  a(href="/") 主页
+                li
+                  a(href="/login") 登录
+
+          div(class="inner cover")
+            h1(class="cover-heading") Bix 管理
+            p(class="lead") Bix是一款集地图、社交、共享于一体的App，旨在通过地图和社交元素帮助电动汽车共享充电桩、共享汽车，从而方便用户，建立圈子。
+            p(class="lead")
+              a(href="/login" class="btn btn-lg btn-default") 登录后台
+
+          div(class="mastfoot")
+            div(class="inner")
+              p Bix 后台管理，Bix团队
