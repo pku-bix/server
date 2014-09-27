@@ -1,70 +1,71 @@
-var express = require('express');
-var passport = require('passport');
+var router = require('express').Router()
 var User = require('../models/user')
 
-var router = express.Router();
 
+router.get('/piles', function(req,res){
+  User.find({ type : 'pile' }, 'pile', function(err, users){
+    json_render(res, err, users)
+  })
+})
 
-router.get('/hello', function(req, res) {
-  res.send('hello!')
-});
-
-router.get('/token', function(req, res, next) {
-  if(!req.query.username || !req.query.password){
-    var json = {
-      status:   'error',
-      message:  '请提供用户名与密码'
-    }
-    res.send(JSON.stringify(json));
-    return;
-  }
-
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { 
-      return next(err);
-    }
-    if (!user) { 
-      var json = {
-        status:   'error',
-        message:  info.message
-      }
-    }
-    else{
-      var token = user.getToken();
-      var json = {
-        status:   'success',
-        token:    token
-      }
-    }
-    res.send(JSON.stringify(json));
-  })(req, res, next);
-});
 
 router.get('/user/:username', function(req, res){
+  User.findOne({ type:'user', username: req.params.username }, function(err, user){
+    json_render(res, err, user)
+  })
+})
 
-  if(!req.query.token){
+router.get('/pile/:id', function(req, res){
+  User.findOne({ id : req.params.id }, function(err, user){
+    json_render(res, err, user)
+  })
+})
+
+
+router.post('/user/add', function(req, res){
+  var user = new User({
+    type:     req.body.type,
+    username:req.body.username,
+    nickname: req.body.nickname,
+    phone   :req.body.phone,
+    pile    :{
+      location:req.body.location,
+      longitude : req.body.lng,
+      latitude  : req.body.lat
+    }
+  })
+  user.save(function (err, user) {
+    json_render(res, err, '')
+  })
+})
+
+router.post('/user/delete',function(req, res){
+  User.findOneAndRemove({ username : req.body.username },function(err, r){
+    json_render(res, err, '')
+  })
+})
+
+router.post('/pile/delete',function(req, res){
+  User.findOneAndRemove({ _id : req.body.id },function(err, r){
+    json_render(res, err, '')
+  })
+})
+
+function json_render(res, error, result){
+  if(error){
     var json = {
       status:   'error',
-      message:  '请提供token'
+      error:    error
     }
-    res.send(JSON.stringify(json));
-    return;
   }
-  User.findByToken(req.query.token, function(err, user){
-    if(err){
-      var json = {
-        status:   'error',
-        message:  'token无效'
-      }
+  else{
+    var json = {
+      status:   'success',
+      result:   result
     }
-    else{
-      var json = {
-        status:   'success',
-        user:     user
-      }
-    }
-    res.send(JSON.stringify(json));
-  });
-});
+  }
+  res.send(JSON.stringify(json));
+}
+
 
 module.exports = router;

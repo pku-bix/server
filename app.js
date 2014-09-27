@@ -1,20 +1,24 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var expressSession = require('express-session');
-var User = require('./models/user.js');
+var express = require('express')
+var path = require('path')
+var favicon = require('serve-favicon')
+var logger = require('morgan')
+var cookieParser = require('cookie-parser')
+var bodyParser = require('body-parser')
+var expressSession = require('express-session')
+var Admin = require('./models/admin.js')
+var authenticate = require('./controllers/authenticate.js')
 
+// mongoose setup
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/bix');
 
+// passport setup
 var passport = require('passport')
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.use(Admin.createStrategy());
+passport.serializeUser(Admin.serializeUser());
+passport.deserializeUser(Admin.deserializeUser());
 
+// app setup
 var app = express();
 app.set('env', 'development');
 app.set('views', path.join(__dirname, 'views'));
@@ -31,26 +35,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 
-var homeController = require('./controllers/home')
-var adminController = require('./controllers/admin')
-var apiController = require('./controllers/api')
+app.use('/', require('./controllers/home'));
+app.use('/admin', authenticate(require('./controllers/admin')))
+app.use('/api', require('./controllers/api'));
 
-app.use('/', homeController);
-app.use('/admin', homeController.LoginRequired());
-app.use('/admin', adminController);
-app.use('/api', apiController);
 
-// catch 404 and forward to error handler
+// error handlers
+
+// catch 404 
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-// error handlers
 
-// development error handler
-// will print stacktrace
+// development error handlers
+
+// print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
@@ -62,6 +64,7 @@ if (app.get('env') === 'development') {
 }
 
 // production error handler
+
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);

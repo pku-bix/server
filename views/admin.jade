@@ -2,6 +2,8 @@ extends layout
 
 block content
   link(rel="stylesheet" href="/stylesheets/admin.css")
+  script(src="http://api.map.baidu.com/api?v=2.0&ak=556c863b72a6499c87afdc23e65de39c")
+  script(src="/javascripts/admin.js")
 
   div(class="navbar navbar-default navbar-static-top" role="navigation")
     div(class="container")
@@ -22,74 +24,56 @@ block content
 
   div(class="container")
 
-    span(class="hidden") #{apiToken}
+    div(class="page-header")
+      h2 用户管理
 
-    h2(class="page-header") 管理员用户
+    .row
+      form.col-sm-6(role='form', action='/api/user/add', method='post')
+        input(type='hidden', name='type', value='pile')
+        .form-group.col-sm-6
+          label 充电桩名
+          input.form-control(type='text', name='nickname', placeholder='输入充电桩名称')
+        .form-group.col-sm-6
+          label 电话
+          input.form-control(type='text', name='phone', placeholder='输入电话号码')
+        .form-group.col-sm-12
+          label 位置
+          .input-group
+            input.form-control#location(type='text', name='location', placeholder='输入所在的位置')
+            span.input-group-btn
+              a.btn.btn-default#search 搜索
+        .form-group.col-sm-6
+          label 经度
+          input.form-control(type='text', name='lng', placeholder='输入经度')
+        .form-group.col-sm-6
+          label 纬度
+          input.form-control(type='text', name='lat', placeholder='输入维度')
+        .col-sm-6
+          button.btn.btn-primary#add(type='submit') 添加
+          a.btn.btn-success#encode-map 获得经纬度
+        .col-sm-6
+        .clearfix
+      .col-sm-6#baidumap
+
+    hr
+
     table(class="table table-striped")
       thead
         tr
           td 用户名
+          td 昵称
           td 位置
           td 经纬度
           td 电话
           td 操作
       tbody
-        if normalUsers
-          each user in adminUsers
-            tr
-              td= user.username
-              td= user.pile.location
-              td= user.pile.longitude + ',' + user.pile.latitude
-              td= user.phone
-              td
-                a(class="btn btn-warning btn-xs mod") 修改
-                a(class="btn btn-danger btn-xs mod") 删除
-    a(class="btn btn-primary pull-right add") 添加
+        each user in users
+          tr(data-id=user.id)
+            td= user.username
+            td= user.nickname
+            td= user.pile.location
+            td= user.pile.longitude + ',' + user.pile.latitude
+            td= user.phone
+            td
+              a.delete(class="btn btn-danger btn-xs") 删除
     div(class="clearfix")
-
-    h2(class="page-header") 超级充电桩
-    table(class="table table-striped")
-      thead
-        tr
-          td 名称
-          td 位置
-          td 经纬度
-          td 电话
-          td 操作
-      tbody
-        if pileUsers
-          each user in pileUsers
-            tr
-              td= user.username
-              td= user.pile.location
-              td= user.pile.longitude + ',' + user.pile.latitude
-              td= user.phone
-              td
-                a(class="btn btn-warning btn-xs mod") 修改
-                a(class="btn btn-danger btn-xs mod") 删除
-    a(class="btn btn-primary pull-right add") 添加
-    div(class="clearfix")
-
-    h2(class="page-header") 普通用户
-    table(class="table table-striped")
-      thead
-        tr
-          td 用户名
-          td 位置
-          td 经纬度
-          td 电话
-          td 操作
-      tbody
-        if normalUsers
-          each user in normalUsers
-            tr
-              td= user.username
-              td= user.pile.location
-              td= user.pile.longitude + ',' + user.pile.latitude
-              td= user.phone
-              td
-                a(class="btn btn-warning btn-xs mod") 修改
-                a(class="btn btn-danger btn-xs mod") 删除
-    a(class="btn btn-primary pull-right add") 添加
-    div(class="clearfix")
-
