@@ -3,7 +3,7 @@ var User = require('../models/user')
 
 
 router.get('/piles', function(req,res){
-  User.find({ type : 'pile' }, 'pile', function(err, users){
+  User.find({ type : 'pile' }, 'type pile', function(err, users){
     json_render(res, err, users)
   })
 })
@@ -16,7 +16,7 @@ router.get('/user/:username', function(req, res){
 })
 
 router.get('/pile/:id', function(req, res){
-  User.findOne({ id : req.params.id }, function(err, user){
+  User.findOne({ _id : req.params.id }, function(err, user){
     json_render(res, err, user)
   })
 })

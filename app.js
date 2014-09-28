@@ -21,7 +21,7 @@ passport.deserializeUser(Admin.deserializeUser());
 
 // app setup
 var app = express();
-app.set('env', 'development');
+app.set('env', process.env.ENV || 'development');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 

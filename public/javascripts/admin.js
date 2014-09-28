@@ -41,6 +41,7 @@ $(function(){
         marker.setPosition(point)
         map.centerAndZoom(point, 16);
       }
+      $('#encode-map').click()
     })
   })
 
