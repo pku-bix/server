@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', require('./controllers/home'));
+//app.use('/', require('./controllers/home'));
 app.use('/admin', authenticate(require('./controllers/admin')))
 app.use('/api', require('./controllers/api'));
 
