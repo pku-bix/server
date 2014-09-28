@@ -4,7 +4,8 @@ var favicon = require('serve-favicon')
 var logger = require('morgan')
 var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser')
-var expressSession = require('express-session')
+var session = require('express-session')
+var RedisStore = require('connect-redis')(session);
 var Admin = require('./models/admin.js')
 var authenticate = require('./controllers/authenticate.js')
 
@@ -29,7 +30,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(expressSession({ secret: 'hello! Bix', resave: true, saveUninitialized: true, cookie: { expires: false }}));
+app.use(session({ secret: 'hello! Bix', store: new RedisStore(), resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
