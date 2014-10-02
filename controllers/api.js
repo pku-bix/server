@@ -3,7 +3,11 @@ var User = require('../models/user')
 
 
 router.get('/piles', function(req,res){
-  User.find({ type : 'pile' }, 'type pile', function(err, users){
+  User.find({ $or: [ { type:'superCharger' }, 
+                     { type:'destinationCharger' }, 
+                     { type:'user', share_charger:true }]},
+            'type longitude latitude detailedaddress', 
+            function(err, users){
     json_render(res, err, users)
   })
 })
@@ -53,18 +57,18 @@ router.post('/pile/delete',function(req, res){
 
 function json_render(res, error, result){
   if(error){
-    var json = {
+    var obj = {
       status:   'error',
       error:    error
     }
   }
   else{
-    var json = {
+    var obj = {
       status:   'success',
       result:   result
     }
   }
-  res.send(JSON.stringify(json));
+  res.send(JSON.stringify(obj));
 }
 
 

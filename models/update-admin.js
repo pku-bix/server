@@ -1,4 +1,4 @@
-var Admin = require('./models/admin')
+var Admin = require('./admin')
 
 var mongoose = require('mongoose')
 var db = mongoose.connect('mongodb://localhost/bix')
