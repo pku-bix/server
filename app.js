@@ -30,7 +30,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({ secret: 'hello! Bix', store: new RedisStore(), resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
+
+if (app.get('env') === 'development') {
+  app.use(session({ secret: 'hello! Bix', resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
+}
+else{
+  app.use(session({ secret: 'hello! Bix', store: new RedisStore(), resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
+}
+
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
