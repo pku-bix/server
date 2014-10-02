@@ -1,4 +1,4 @@
-var User = require('./models/user')
+var User = require('../models/user')
 var mongoose = require('mongoose')
 var fs = require('fs')
 var extend = require('util')._extend
