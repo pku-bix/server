@@ -1,0 +1,54 @@
+# 环境配置
+
+
+## 安装第三方软件
+
+* Redis-server，用于存储会话，服务器重启后将不影响会话状态，用于生产环境。
+* MongoDB，用于存储用户数据、应用数据。
+* ejabberd，用户XMPP协议的聊天服务与用户注册与验证。
+
+
+## 自动构建
+
+```bash
+# 从Git仓库克隆
+git clone git_url
+
+# 自动解决依赖
+npm install
+```
+
+
+## 启动服务器
+
+### 启动ejabberd
+
+### 启动Node
+
+1. 启动数据库
+
+  ```bash
+  # start mongodb
+  mongod
+  ```
+
+2. 在生产环境需启动Redis
+
+  ```bash
+  # start redis, in production env
+  redis-server
+  ```
+
+3. 启动Node
+
+  ```bash
+  # start app.js
+  npm start 
+  ```
+
+
+# Web API
+
+base = http://121.40.72.197
+
+获取充电桩位置
