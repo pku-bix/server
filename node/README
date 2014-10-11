@@ -23,6 +23,8 @@ npm install
 
 ### 启动ejabberd
 
+ejabberd安装与配置参见：[CentOS架设XMPP服务器](http://harttle.github.io/development/centos_xmpp.html)
+
 ### 启动Node
 
 1. 启动数据库
