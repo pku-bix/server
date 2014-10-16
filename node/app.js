@@ -46,6 +46,7 @@ app.use(passport.session());
 app.use('/', require('./controllers/home'));
 app.use('/admin', authenticate(require('./controllers/admin')))
 app.use('/api', require('./controllers/api'));
+app.use('/xmppforward', require('./controllers/xmppforward'));
 
 
 // error handlers
