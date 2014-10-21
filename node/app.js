@@ -30,7 +30,7 @@ app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(multipart({ uploadDir: __dirname + '/upload' })) 
+app.use(multipart({ uploadDir: __dirname + '/public/upload' })) 
 app.use(cookieParser());
 
 if (app.get('env') === 'development') {

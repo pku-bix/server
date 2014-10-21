@@ -42,12 +42,12 @@ router.route('/user/:username')
 
       if(req.files.avatar){
         var rawpath = req.files.avatar.path
-        var dstpath = path.dirname(rawpath) + '/avatar/'
-                      + req.params.username
-                      + path.extname(rawpath)
+        var dstpath = process.cwd() + '/public/avatar/'
+                      + req.params.username + path.extname(rawpath)
         fs.rename(rawpath, dstpath, function(err){
           if(err) return next(err)
-          else res.send({ raw:  raw })
+
+          res.send({ raw:  raw })
         })
       }
       else res.send({ raw:  raw })
