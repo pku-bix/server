@@ -6,6 +6,7 @@
 * Redis-server，用于存储会话，服务器重启后将不影响会话状态，用于生产环境。
 * MongoDB，用于存储用户数据、应用数据。
 * ejabberd，用户XMPP协议的聊天服务与用户注册与验证。
+* npm, grunt-cli, 用于构建自动化
 
 
 ## 自动构建
@@ -27,30 +28,36 @@ ejabberd安装与配置参见：[CentOS架设XMPP服务器](http://harttle.githu
 
 ### 启动Node
 
-1. 启动数据库
+1. 数据库
 
   ```bash
-  # start mongodb
+  # 启动MongoDB
   mongod
-  ```
-
-2. 在生产环境需启动Redis
-
-  ```bash
-  # start redis, in production env
+  # 生产环境还需启动redis
   redis-server
   ```
 
-3. 启动Node
+2. 启动Node
 
   ```bash
-  # start app.js
-  npm start 
+  # 开发环境
+  grunt
+  # 生产环境
+  grunt server
   ```
-
 
 # Web API
 
-base = http://121.40.72.197
+```bash
+# 服务器IP
+base=http://121.40.72.197/api
+# 获取可用充电桩位置：包括超级充电站、目的地充电站、分享的家庭充电桩
+curl $base/chargers
+# 获取充电桩详细信息
+curl $base/charger/54455a5e24a180b42b43731a
+# 获取用户详细信息
+curl $base/user/testuser1
+# 更新或创建用户信息
+curl -F "nickname=harttle" -F "wechat_id=hehe" -F "avatar=@./avatar.jpg" $base/user/testuser1
+```
 
-获取充电桩位置

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "grunt"
   },
   "dependencies": {
     "express": "~4.8.6",
@@ -23,6 +23,12 @@
     "jwt-simple": "^0.2.0",
     "var": "^0.1.0",
     "request": "^2.44.0",
-    "connect-redis": "^2.1.0"
+    "connect-redis": "^2.1.0",
+    "connect-multiparty": "^1.2.5"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-express-server": "^0.4.19",
+    "grunt-contrib-watch": "^0.6.1"
   }
 }

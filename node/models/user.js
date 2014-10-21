@@ -1,41 +1,14 @@
 var mongoose = require('mongoose');
-var passportLocalMongoose = require('passport-local-mongoose');
 var Schema = mongoose.Schema;
 
-var User = new Schema({
-  type:         String,
-
-// user
+var UserSchema = new Schema({
   username:     String,
   nickname:     String,
+  desc:         String,
+  wechat_id:    String,
   phone:        String,
   share_charger:    Boolean,
-
-// super charger
-  sup_id:       String,
-  province :    String,
-  city :        String,
-  address :     String,
-  parkingnum :  String,
-  longitude :   String,
-  latitude :    String,
-  time :        String,
-  is_delete :   String,
-  detailedaddress :       String,
-  opened :      String,
-  detailpage:   String,
-
-// des
-  destinationcharging_id :        String,
-  name :        String,
-  //detailedaddress :       String,
-  //province :    String,
-  //city :        String,
-  //parkingnum :  String,
-  //longitude :   String,
-  //latitude :    String,
-  info :        String,
-  //is_delete:    String
+  charger:      { type: Schema.Types.ObjectId, ref: 'HomeCharger'}
 });
 
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('User', UserSchema);

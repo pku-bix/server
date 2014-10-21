@@ -1,75 +1,62 @@
 var router = require('express').Router()
+var Charger = require('../models/charger').Charger
+var HomeCharger  = require('../models/charger').HomeCharger
+var SuperCharger = require('../models/charger').SuperCharger
+var DestCharger  = require('../models/charger').DestCharger
 var User = require('../models/user')
+var path = require('path')
+var fs = require('fs')
 
-
-router.get('/piles', function(req,res){
-  User.find({ $or: [ { type:'superCharger' }, 
-                     { type:'destinationCharger' }, 
-                     { type:'user', share_charger:true }]},
-            'type longitude latitude detailedaddress', 
-            function(err, users){
-    json_render(res, err, users)
+// charger queries
+router.get('/chargers', function(req,res,next){
+  Charger.find({ enabled: true },
+    '_type longitude latitude detailedaddress', 
+    function(err, chargers){
+      if(err) next(err)
+      else res.send({ chargers:  chargers })
+    })
+})
+.get('/charger/:id', function(req, res,next){
+  Charger.findById(req.params.id, function(err, charger){
+    if(err) next(err)
+    else  res.send({ charger:  charger })
   })
 })
 
+// user queries & updates
+router.route('/user/:username')
+.get(function(req, res, next){
+  User.findOne({username: req.params.username })
+    .populate('charger')
+    .exec(function(err, user){
+      if(err) next(err)
+      else  res.send({ user:  user })
+    })
+})
+.post( function(req, res, next){
+  User.update({username: req.params.username},
+    req.body,
+    { upsert: true },
+    function(err, numberAffected, raw){
+      if(err){ next(err); return } 
 
-router.get('/user/:username', function(req, res){
-  User.findOne({ type:'user', username: req.params.username }, function(err, user){
-    json_render(res, err, user)
-  })
+      if(req.files.avatar){
+        var rawpath = req.files.avatar.path
+        var dstpath = path.dirname(rawpath) + '/avatar/'
+                      + req.params.username
+                      + path.extname(rawpath)
+        fs.rename(rawpath, dstpath, function(err){
+          if(err) return next(err)
+          else res.send({ raw:  raw })
+        })
+      }
+      else res.send({ raw:  raw })
+    })
 })
 
-router.get('/pile/:id', function(req, res){
-  User.findOne({ _id : req.params.id }, function(err, user){
-    json_render(res, err, user)
-  })
+// error handler
+router.use(function(err,req,res){
+  res.json({ status: 'error', error:  err })
 })
-
-
-router.post('/user/add', function(req, res){
-  var user = new User({
-    type:     req.body.type,
-    username:req.body.username,
-    nickname: req.body.nickname,
-    phone   :req.body.phone,
-    pile    :{
-      location:req.body.location,
-      longitude : req.body.lng,
-      latitude  : req.body.lat
-    }
-  })
-  user.save(function (err, user) {
-    json_render(res, err, '')
-  })
-})
-
-router.post('/user/delete',function(req, res){
-  User.findOneAndRemove({ username : req.body.username },function(err, r){
-    json_render(res, err, '')
-  })
-})
-
-router.post('/pile/delete',function(req, res){
-  User.findOneAndRemove({ _id : req.body.id },function(err, r){
-    json_render(res, err, '')
-  })
-})
-
-function json_render(res, error, result){
-  if(error){
-    var obj = {
-      status:   'error',
-      error:    error
-    }
-  }
-  else{
-    var obj = {
-      status:   'success',
-      result:   result
-    }
-  }
-  res.send(JSON.stringify(obj));
-}
-
 
 module.exports = router;

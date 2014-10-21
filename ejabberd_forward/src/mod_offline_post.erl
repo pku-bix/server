@@ -20,7 +20,7 @@ start(Host, _Opt) ->
         ?INFO_MSG("mod_offline_post loading", []),
         inets:start(),
         ?INFO_MSG("mod_offline_post HTTP client started", []),
-        post_offline_message("testFrom", "testTo", "testBody"),
+%%        post_offline_message("testFrom", "testTo", "testBody"),
         ejabberd_hooks:add(offline_message_hook, Host, ?MODULE, create_message, 10).   
  
  
@@ -32,7 +32,7 @@ stop (Host) ->
  
  
 create_message(_From, _To, Packet) ->
-        ?INFO_MSG("mod_offline_post creating message",[]),
+%%        ?INFO_MSG("mod_offline_post creating message",[]),
         Type = xml:get_tag_attr_s("type", Packet),
         FromS = xml:get_tag_attr_s("from", Packet),
         ToS = xml:get_tag_attr_s("to", Packet),
@@ -44,9 +44,9 @@ create_message(_From, _To, Packet) ->
  
  
 post_offline_message(From, To, Body) ->
-        ?INFO_MSG("mod_offline_post posting from ~p to ~p body ~p~n",[From, To, Body]),
+%%        ?INFO_MSG("mod_offline_post posting from ~p to ~p body ~p~n",[From, To, Body]),
          http:request(post, {"http://localhost/xmppforward/offline",[], 
          "application/x-www-form-urlencoded",
          lists:concat(["from=", From,"&to=", To,"&body=", Body])}, [], []),
-        ?INFO_MSG("mod_offline_post post request sent", []).
+%%        ?INFO_MSG("mod_offline_post post request sent", []).
 
