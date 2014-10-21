@@ -18,15 +18,20 @@ module.exports = function(grunt) {
         options: {
           node_env: 'production',
           port: 80,
-          background: false
+          background: true
         }
       }
     },
 
     watch: {
-      express: {
+      dev: {
         files:  [ '*/*.js' ],
-        tasks:  [ 'express:dev' ],
+        tasks:  [ 'express:dev'],
+        options: { spawn: false }
+      },
+      prod: {
+        files:  [ '*/*.js' ],
+        tasks:  [ 'express:prod' ],
         options: { spawn: false }
       }
     }
@@ -37,6 +42,6 @@ module.exports = function(grunt) {
   // https://github.com/gruntjs/grunt-contrib-watch
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('server', [ 'express:prod' ])
-  grunt.registerTask('default', ['express:dev', 'watch']);
+  grunt.registerTask('server', [ 'express:prod', 'watch:prod' ])
+  grunt.registerTask('default', ['express:dev', 'watch:dev']);
 }
