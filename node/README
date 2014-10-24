@@ -58,6 +58,8 @@ curl $base/charger/54455a5e24a180b42b43731a
 # 获取用户详细信息
 curl $base/user/testuser1
 # 更新或创建用户信息
-curl -F "nickname=harttle" -F "wechat_id=hehe" -F "avatar=@./avatar.jpg" $base/user/testuser1
+curl -F "nickname=harttle" -F "wechat_id=hehe" -F "avatar=@./avatar.png" $base/user/testuser1
+# 访问用户头像
+curl $base/avatar/testuser1.png
 ```
 
