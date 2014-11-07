@@ -11,12 +11,9 @@ function BaseSchema() {
     province :    String,
     city :        String,
     parkingnum :  String,
-    longitude :   String,
-    latitude :    String
+    longitude :   { type: String, required: true },
+    latitude :    { type: String, required: true },
   })
-  this.validate = function(){
-    return this.longitude && this.latitude
-  }
 }
 util.inherits(BaseSchema, Schema);
 

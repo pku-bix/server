@@ -48,18 +48,39 @@ ejabberd安装与配置参见：[CentOS架设XMPP服务器](http://harttle.githu
 
 # Web API
 
+为了更好的可维护性与通用性（同时提供给客户端更大的灵活性），Web API 设计应尽量满足 restful 原则。一般（至少在负载不严重的情况下）不提供外键的 population，客户端通过多次请求获得所需要的数据。
+
 ```bash
 # 服务器IP
 base=http://121.40.72.197/api
+
 # 获取可用充电桩位置：包括超级充电站、目的地充电站、分享的家庭充电桩
 curl $base/chargers
+
 # 获取充电桩详细信息
 curl $base/charger/54455a5e24a180b42b43731a
+
 # 获取用户详细信息
 curl $base/user/testuser1
-# 更新或创建用户信息
+
+# 更新或创建用户信息，可选字段有：nickname, desc, wechat_id, phone, share_charger
 curl -F "nickname=harttle" -F "wechat_id=hehe" -F "avatar=@./avatar.png" $base/user/testuser1
+
 # 访问用户头像
 curl $base/avatar/testuser1.png
+
+# 分享充电桩
+# 经纬度必选。所有字段均可用，参见 GET /charger/<id> 返回的字段
+curl $base/charger -F 'username=testuser1' -F 'longitude=0' -F 'latitude=222'
+```
+
+
+# 未实现 API
+
+```bash
+# 获取最近N条动态
+curl $base/posts?limit=<N>
+# 获取index从<M>开始的<N>条（往前数，即更旧的）
+curl $base/posts?limit=<N>&index=<M>
 ```
 

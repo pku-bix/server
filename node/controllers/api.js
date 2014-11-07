@@ -7,22 +7,20 @@ var User = require('../models/user')
 var path = require('path')
 var fs = require('fs')
 
-router
 // charger query
-  .get('/chargers', function(req, res, next) {
+router.get('/chargers', function(req, res, next) {
     Charger.find({
-        enabled: true
-      },
-      '_type longitude latitude detailedaddress',
-      function(err, chargers) {
-        if (err) next(err)
-        else res.send({
-          chargers: chargers
-        })
+      enabled: true
+    }, '_type longitude latitude detailedaddress', function(err, chargers) {
+      if (err) next(err)
+      else res.send({
+        chargers: chargers
       })
+    })
   })
-  // charger detail
-  .get('/charger/:id', function(req, res, next) {
+
+// charger detail
+router.get('/charger/:id', function(req, res, next) {
     Charger.findById(req.params.id, function(err, charger) {
       if (err) next(err)
       else res.send({
@@ -30,39 +28,47 @@ router
       })
     })
   })
-  // home charger post
-  .post('/charger', function(req, res, next) {
-    var charger = new HomeCharger({
-      req.body
-    })
-    if (charger.validate()) {
-      User.findOne({
-        username: req.body.username
-      }, function(err, user) {
-        if (err) next(err)
-        if (!user) next('user not found: ' + req.body.username)
 
-        charger.owner = user
-        charger.save(function(err, charger, numberAffected) {
-          if (err) next(err);
+// home charger post
+router.post('/charger', function(req, res, next) {
+    var charger = new HomeCharger(req.body)
+
+    User.findOne({
+      username: req.body.username
+    }, function(err, user) {
+      if (err) return next(err)
+      if (!user) return next('user not found: ' + req.body.username)
+
+      charger.owner = user.id
+      user.charger = charger.id
+      user.share_charger = true
+      charger.save(function(err, charger, num){
+        if (err){
+          return next(err)
+        }
+
+        user.save(function(err, user, num){
+          if (err) return next(err);
           res.send({
             charger: charger
           })
         })
       })
-    }
+    })
   })
+
 
 // user queries & updates
 router.route('/user/:username')
   .get(function(req, res, next) {
+
     User.findOne({
         username: req.params.username
       })
-      .populate('charger')
+      //.populate('charger')
       .exec(function(err, user) {
-        if (err) next(err)
-        else res.send({
+        if (err) return next(err)
+        res.send({
           user: user
         })
       })
@@ -75,10 +81,7 @@ router.route('/user/:username')
         upsert: true // update or insert
       },
       function(err, numberAffected, raw) {
-        if (err) {
-          next(err);
-          return
-        }
+        if (err) return next(err);
 
         if (req.files.avatar) {
           var rawpath = req.files.avatar.path
@@ -97,12 +100,10 @@ router.route('/user/:username')
   })
 
 // error handler
-router.use(function(err, req, res) {
+router.use(function(err, req, res, next) {
+  console.log('nima!')
   res.status(err.status || 400)
-  res.json({
-    error: 'Bad Request',
-    msg: err
-  })
+  res.json( err )
 })
 
 module.exports = router;
