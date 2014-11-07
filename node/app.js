@@ -62,28 +62,23 @@ app.use(function(req, res, next) {
 
 
 // development error handlers
-
-// print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
-            message: err.message,
-            error: err
+            message: err.message, 
+            error: err    // print stacktrace
         });
     });
 }
 
 // production error handler
-
-// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
-        error: {}
+        error: {}       // no stacktraces leaked to user
     });
 });
-
 
 module.exports = app;

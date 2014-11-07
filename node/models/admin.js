@@ -1,3 +1,6 @@
+// file：web admin user model
+// author: harttle, yangjvn@126.com
+
 var mongoose = require('mongoose');
 var passportLocalMongoose = require('passport-local-mongoose');
 var Schema = mongoose.Schema;

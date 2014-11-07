@@ -14,6 +14,9 @@ function BaseSchema() {
     longitude :   String,
     latitude :    String
   })
+  this.validate = function(){
+    return this.longitude && this.latitude
+  }
 }
 util.inherits(BaseSchema, Schema);
 
@@ -22,7 +25,7 @@ var ChargerSchema = new BaseSchema()
 
 // instantiate the derived homecharger
 var HomeChargerSchema = new BaseSchema({
-  owner:       { type: Schema.Types.ObjectId, ref: 'User' }
+  owner:       { type: String, ref: 'User' }
 })
 
 // instantiate the derived supercharger
