@@ -48,7 +48,7 @@ ejabberd安装与配置参见：[CentOS架设XMPP服务器](http://harttle.githu
 
 # Web API
 
-为了更好的可维护性与通用性（同时提供给客户端更大的灵活性），Web API 设计应尽量满足 restful 原则。一般（至少在负载不严重的情况下）不提供外键的 population，客户端通过多次请求获得所需要的数据。
+为了更好的可维护性与通用性（同时提供给客户端更大的灵活性），Web API 设计应尽量满足 restful 原则。外键根据需要进行population，暂时借此减少客户端请求次数。
 
 ```bash
 # 服务器IP
@@ -78,9 +78,11 @@ curl $base/charger -F 'username=testuser1' -F 'longitude=0' -F 'latitude=222'
 # 未实现 API
 
 ```bash
+# 发送动态，以author标识当前用户。
+curl -F "author=testuser1" -F "text=example_text" -F "img0=@./a.png" $base/posts
 # 获取最近N条动态
 curl $base/posts?limit=<N>
-# 获取index从<M>开始的<N>条（往前数，即更旧的）
-curl $base/posts?limit=<N>&index=<M>
+# 获取id在<M>以前的<N>条（即更旧的）
+curl $base/posts?limit=<N>&before=<M>
 ```
 
