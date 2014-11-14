@@ -35,6 +35,13 @@ app.use(cookieParser());
 
 if (app.get('env') === 'development') {
   app.use(session({ secret: 'hello! Bix', resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
+  app.use(function(req, res, next){
+    console.log('REQUEST FROM', req.ip)
+    console.log('req url:',    req.hostname + req.path)
+    console.log('headers:', req.headers)
+    console.log('body:',    req.body)
+    next()
+  })
 }
 else{
   app.use(session({ secret: 'hello! Bix', store: new RedisStore(), resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
@@ -46,9 +53,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', require('./controllers/home'));
-app.use('/admin', authenticate(require('./controllers/admin')))
-app.use('/api', require('./controllers/api'));
+app.use('/api', require('./controllers/api-users'));
+app.use('/api', require('./controllers/api-posts'));
+app.use('/api', require('./controllers/api-chargers'));
+app.use('/api', require('./controllers/api-error'));
 app.use('/xmppforward', require('./controllers/xmppforward'));
+app.use('/admin', authenticate(require('./controllers/admin')))
 
 
 // error handlers
