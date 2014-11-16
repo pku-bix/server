@@ -7,6 +7,7 @@ var UserSchema = new Schema({
   desc:         String,
   wechat_id:    String,
   phone:        String,
+  avatar:       String,
   share_charger:    Boolean,
   charger:      { type: String, ref: 'HomeCharger'}
 });
