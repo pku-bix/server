@@ -2,7 +2,6 @@ var router = require('express').Router()
 var User = require('../models/user')
 var apn = require('apn');
 
-
 router.post('/offline', function(req, res) {
     var options = {};
 
@@ -21,6 +20,8 @@ router.post('/offline', function(req, res) {
     };
 
     apnConnection.pushNotification(note, myDevice);
+
+    res.end()
 
 })
 

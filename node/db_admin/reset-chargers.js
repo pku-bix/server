@@ -4,6 +4,7 @@ var mongoose = require('mongoose')
 var fs = require('fs')
 var extend = require('util')._extend
 var db = mongoose.connect('mongodb://localhost/bix')
+var Charger = require('../models/charger').Charger
 var SuperCharger = require('../models/charger').SuperCharger
 var DestCharger  = require('../models/charger').DestCharger
 
@@ -15,7 +16,7 @@ function update(filename, Type){
     }
 
     // first, remove all
-    Type.remove({})
+    // Type.remove({})
 
     // second, load new
     var provinces = JSON.parse(dat)
@@ -33,5 +34,6 @@ function update(filename, Type){
   })
 }
 
+Charger.remove({ })
 update('superChargers.dat',SuperCharger)
 update('destinationChargers.dat',DestCharger)

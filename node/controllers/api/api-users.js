@@ -10,7 +10,7 @@
 var router = require('express').Router()
 var path = require('path')
 var fs = require('fs')
-var User = require('../models/user')
+var User = require(process.cwd() + '/models/user')
 var extend = require('util')._extend
 
 router.route('/user/:username')
@@ -20,37 +20,29 @@ router.route('/user/:username')
             })
             .populate('charger')
             .exec(function(err, user) {
-                if (err) return next(err)
-                res.send(extend(user, {
-                    avatar: ['http:/', req.headers.host, 'upload', user.avatar].join('/')
-                }))
+                if (err) return next(err);
+                if (!user) return next('user not found: ' + req.params.username);
+                if (user.avatar) user.avatar = ['http:/', req.headers.host, 'upload', user.avatar].join('/')
+                res.data=user;
+                next();
             })
     })
     .post(function(req, res, next) {
-        var patch = {
-            username: req.params.username
-        };
-        if (req.files.avatar)
-            patch.avatar = path.basename(req.files.avatar.path);
+        var patch = req.body;
+        if (req.files.avatar) patch.avatar = path.basename(req.files.avatar.path);
 
-        User.update(patch, req.body, {
+        User.update({
+            username: req.params.username
+        }, patch, {
                 upsert: true // update or insert
             },
             function(err, numberAffected, raw) {
                 if (err) return next(err);
-                res.send({
+                res.data = {
                     raw: raw
-                });
+                };
+                next();
             })
     })
 
 module.exports = router;
-
-
-// file rename approach, may be useful some day
-//var rawpath = req.files.avatar.path
-//var dstpath = process.cwd() + '/public/avatar/' + req.params.username + path.extname(rawpath)
-//fs.rename(rawpath, dstpath, function(err) {
-//  if (err) return next(err)
-//  res.send(raw)
-//})
