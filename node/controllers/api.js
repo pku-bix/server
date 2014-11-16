@@ -101,18 +101,21 @@ router.route('/user/:username')
 
 router.route('/posts')
   .post(function(req, res, next) {
+
     User.findOne({
-        username: req.params.username
+        username: req.body.author
       })
       .exec(function(err, user) {
         if (err) return next(err)
+	if (!user) return next('user not found: ' + req.body.author)
+
         var imgs = []
         for (i in req.files) {
           imgs.push(path.basename(req.files[i].path))
         }
         var post = new Post({
           author: user.id,
-          text: req.params.author,
+          text: req.body.text,
           time: new Date(),
           imgs: imgs,
         })
@@ -126,14 +129,14 @@ router.route('/posts')
 
     // before param
     var cond = {}
-    if (req.params.before) {
+    if (req.query.before) {
       cond['_id'] = {
-        $lt: req.params.before
+        $lt: req.query.before
       }
     }
 
     // limit param
-    var limit = req.params.limit || 10
+    var limit = req.query.limit || 10
 
     Post.find(cond)
       .limit(limit)
