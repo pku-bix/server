@@ -9,7 +9,7 @@ var extend = require('util')._extend
 router.route('/posts')
   .post(function(req, res, next) {
     User.findOne({
-        username: req.params.username
+        username: req.body.author
       })
       .exec(function(err, user) {
         if (err) return next(err)
@@ -18,7 +18,7 @@ router.route('/posts')
         })
         var post = new Post({
           author: user.id,
-          text: req.params.author,
+          text: req.body.author,
           time: new Date(),
           imgs: imgs,
         })
