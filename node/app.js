@@ -36,7 +36,7 @@ app.use(cookieParser());
 if (app.get('env') === 'development') {
   app.use(session({ secret: 'hello! Bix', resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
   app.use(function(req, res, next){
-    console.log('REQUEST FROM', req.ip)
+    console.log(req.method, 'REQUEST FROM', req.ip)
     console.log('req url:',    req.hostname + req.path)
     console.log('headers:', req.headers)
     console.log('body:',    req.body)

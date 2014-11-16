@@ -32,6 +32,7 @@ router.route('/user/:username')
         };
         if (req.files.avatar)
             patch.avatar = path.basename(req.files.avatar.path);
+
         User.update(patch, req.body, {
                 upsert: true // update or insert
             },

@@ -8,6 +8,7 @@ var UserSchema = new Schema({
   wechat_id:    String,
   phone:        String,
   avatar:       String,
+  deviceToken:  String,
   share_charger:    Boolean,
   charger:      { type: String, ref: 'HomeCharger'}
 });

@@ -24,7 +24,8 @@
     "var": "^0.1.0",
     "request": "^2.44.0",
     "connect-redis": "^2.1.0",
-    "connect-multiparty": "^1.2.5"
+    "connect-multiparty": "^1.2.5",
+    "apn": "^1.6.2"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
