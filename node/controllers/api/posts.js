@@ -19,12 +19,16 @@ router.route('/posts')
                 })
                 var post = new Post({
                     author: user.id,
-                    text: req.body.author,
+                    text: req.body.text,
                     time: new Date(),
                     imgs: imgs,
                 })
                 post.save(function(err, post) {
                     if (err) return next(err)
+                    post.author = user;
+                    post.imgs = post.imgs.map(function(img) {
+                            return ['http:/', req.headers.host, 'upload', img].join('/');
+                        })
                     res.data = post;
                     next();
                 })
@@ -41,7 +45,7 @@ router.route('/posts')
         Post.find(cond)
             .limit(limit)
             .sort('-id')
-            .populate('owner')
+            .populate('author')
             .exec(function(err, posts) {
                 if (err) return next(err)
                 res.data = posts.map(function(post) {
