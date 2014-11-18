@@ -13,7 +13,13 @@ router.route('/posts')
             })
             .exec(function(err, user) {
                 if (err) return next(err)
-                if (!user) return next('user not found:', req.body.author)
+                if (!user) {
+                    return next('user not found:', req.body.author)
+                    user = new User({
+                        username: req.body.author,
+                    });
+                    user.save();
+                }
                 var imgs = Object.keys(req.files).map(function(key) {
                     return path.basename(req.files[key].path)
                 })
@@ -27,8 +33,8 @@ router.route('/posts')
                     if (err) return next(err)
                     post.author = user;
                     post.imgs = post.imgs.map(function(img) {
-                            return ['http:/', req.headers.host, 'upload', img].join('/');
-                        })
+                        return ['http:/', req.headers.host, 'upload', img].join('/');
+                    })
                     res.data = post;
                     next();
                 })
