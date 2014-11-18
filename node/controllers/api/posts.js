@@ -33,13 +33,14 @@ router.route('/posts')
     .get(function(req, res, next) {
         var cond = {}
         if (req.params.before) {
-            cond['_id'] = {
+            cond.id = {
                 $lt: req.params.before
             }
         }
         var limit = req.params.limit || 10
         Post.find(cond)
             .limit(limit)
+            .sort('-id')
             .populate('owner')
             .exec(function(err, posts) {
                 if (err) return next(err)

@@ -21,9 +21,9 @@ module.exports = function(app) {
         })
     }
 
-    router.use(require('./api-users'));
-    router.use(require('./api-posts'));
-    router.use(require('./api-chargers'));
+    router.use(require('./users'));
+    router.use(require('./posts'));
+    router.use(require('./chargers'));
 
     // response detail
     if (app.get('env') === 'development') {
