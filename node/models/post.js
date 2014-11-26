@@ -15,7 +15,15 @@ var PostSchema = new Schema({
   text:     String,
   time:     Date,
   imgs:     [String],
-  replies:  [ { type: String, ref: "Reply"} ],
+  replies:  [ { type: String, ref: "Reply"} ]
 });
+
+PostSchema.virtual('imgUrls').get(function(){
+  return this.imgs.map(function(img){
+    return '/upload/' + img;
+  });
+});
+
+PostSchema.set('toJSON', { getters: true, virtuals: true });
 
 module.exports = mongoose.model('Post', PostSchema);

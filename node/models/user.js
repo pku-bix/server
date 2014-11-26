@@ -21,4 +21,10 @@ UserSchema.virtual('displayName').get(function() {
     return this.username;
 });
 
+UserSchema.virtual('avatarUrl').get(function(){
+    return '/upload/' +  this.avatar;
+});
+
+UserSchema.set('toJSON', { getters: true, virtuals: true });
+
 module.exports = mongoose.model('User', UserSchema);
