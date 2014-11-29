@@ -22,7 +22,6 @@ router.route('/user/:username')
             .exec(function(err, user) {
                 if (err) return next(err);
                 if (!user) return next('user not found: ' + req.params.username);
-                if (user.avatar) user.avatar = ['http:/', req.headers.host, 'upload', user.avatar].join('/')
                 res.data=user;
                 next();
             })

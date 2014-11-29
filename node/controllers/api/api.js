@@ -43,7 +43,7 @@ module.exports = function(app) {
     // api error handler
     router.use(errorHandler = function(err, req, res, next) {
         res.status(err.status || 400)
-        res.send(err.message)
+        res.send(err)
     })
 
     return router;
