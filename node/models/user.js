@@ -4,27 +4,24 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     username: String,
     nickname: String,
-    desc: String,
+    signature: String,
     wechat_id: String,
     phone: String,
     avatar: String,
-    deviceToken: String,
-    share_charger: Boolean,
+    device_token: String,
+    share_charger: {type: Boolean, default: false},
     charger: {
         type: String,
         ref: 'HomeCharger'
     }
 });
 
-UserSchema.virtual('displayName').get(function() {
-    if (this.nickname) return this.nickname;
-    return this.username;
+UserSchema.set('toJSON', {
+    getters: true, virtuals: true,
+    transform: function (doc, ret, options) {
+        ret.avatar = '/upload/' + ret.avatar;
+        delete ret._id;
+    }
 });
-
-UserSchema.virtual('avatarUrl').get(function(){
-    return '/upload/' +  this.avatar;
-});
-
-UserSchema.set('toJSON', { getters: true, virtuals: true });
 
 module.exports = mongoose.model('User', UserSchema);

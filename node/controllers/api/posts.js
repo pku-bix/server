@@ -20,28 +20,23 @@ router.route('/posts')
                     });
                     user.save();
                 }
-                var imgs = Object.keys(req.files).map(function (key) {
+                var images = Object.keys(req.files).map(function (key) {
                     return path.basename(req.files[key].path)
-                })
+                });
                 var post = new Post({
                     author: user.id,
-                    text: req.body.text,
-                    time: new Date(),
-                    imgs: imgs,
-                })
+                    content: req.body.content,
+                    images: images
+                });
                 post.save(function (err, post) {
-                    if (err) return next(err)
-                    post.author = user;
-                    post.imgs = post.imgs.map(function (img) {
-                        return ['http:/', req.headers.host, 'upload', img].join('/');
-                    })
+                    if (err) return next(err);
                     res.data = post;
                     next();
                 })
             })
     })
     .get(function (req, res, next) {
-        var cond = {}
+        var cond = {};
         if (req.params.before) {
             cond.id = {
                 $lt: req.params.before
@@ -57,6 +52,6 @@ router.route('/posts')
                 res.data = posts;
                 next();
             });
-    })
+    });
 
 module.exports = router;

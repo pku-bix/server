@@ -6,34 +6,49 @@ var extend = require('util')._extend
 var db = mongoose.connect('mongodb://localhost/bix')
 var Charger = require('../models/charger').Charger
 var SuperCharger = require('../models/charger').SuperCharger
-var DestCharger  = require('../models/charger').DestCharger
+var DestCharger = require('../models/charger').DestCharger
 
-function update(filename, Type){
-  fs.readFile(filename,'utf-8',function(err,dat){
-    if(err){
-      console.log(err)
-      return
-    }
+function update(filename, constructor) {
+    fs.readFile(filename, 'utf-8', function (err, dat) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        var provinces = JSON.parse(dat)
 
-    // first, remove all
-    // Type.remove({})
+        for (var i in provinces) {
+            for (var j in provinces[i].cities) {
+                provinces[i].cities[j].providers
+                    .forEach(function (provider) {
+                        var charger = constructor(provider);
 
-    // second, load new
-    var provinces = JSON.parse(dat)
+                        extend(charger, {
+                            name: provider.name,
+                            address: provider.detailedaddress,
+                            parkingnum: provider.parkingnum,
+                            longitude: provider.longitude,
+                            latitude: provider.latitude,
+                            comment: provider.info || ''
+                        });
 
-    for(var i in provinces){
-      for(var j in provinces[i].cities){
-        provinces[i].cities[j].providers
-          .forEach(function(provider){
-            var charger = new Type(extend({ enabled:true }, provider))
-            charger.save()
-          })
-      }
-    }
-    db.disconnect()
-  })
+                        charger.save();
+                    })
+            }
+        }
+        db.disconnect();
+    })
 }
 
-Charger.remove({ })
-update('superChargers.dat',SuperCharger)
-update('destinationChargers.dat',DestCharger)
+Charger.remove({}).exec();
+
+update('superChargers.dat', function (provider) {
+    return new SuperCharger({
+        hours: provider.time,
+        homepage: provider.detailpage
+    });
+});
+
+update('destinationChargers.dat', function (provider) {
+    return new DestCharger({
+    });
+});
