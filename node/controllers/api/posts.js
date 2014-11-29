@@ -14,7 +14,6 @@ router.route('/posts')
             .exec(function (err, user) {
                 if (err) return next(err)
                 if (!user) {
-                    return next('user not found:', req.body.author);
                     user = new User({
                         username: req.body.author
                     });
