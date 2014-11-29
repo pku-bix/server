@@ -2,19 +2,19 @@ var router = require('express').Router()
 var User = require(process.cwd() + '/models/user')
 var apn = require('apn');
 
-router.post('/offline', function(req, res) {
+router.post('/offline', function (req, res) {
 
     // retrieve from user
     User.findOne({
         username: req.body.from.slice(0, req.body.from.indexOf('@'))
-    }, function(err, fuser) {
+    }, function (err, fuser) {
         if (err) return next(err);
         if (!fuser) return next('user for', req.body.from, 'not found');
 
         // retrieve to user
         User.findOne({
             username: req.body.to.slice(0, req.body.to.indexOf('@'))
-        }, function(err, tuser) {
+        }, function (err, tuser) {
 
             if (!tuser.deviceToken) return next('deviceToken for', req.body.to, 'not found');
             var device = new apn.Device(tuser.deviceToken);
@@ -51,7 +51,7 @@ router.post('/offline', function(req, res) {
     })
 })
 
-var errorHandler = function(err, notification) {
+var errorHandler = function (err, notification) {
     console.err('APN error:', err)
     console.err(notification)
 }

@@ -7,20 +7,20 @@ var fs = require('fs')
 var extend = require('util')._extend
 
 router.route('/posts')
-    .post(function(req, res, next) {
+    .post(function (req, res, next) {
         User.findOne({
-                username: req.body.author
-            })
-            .exec(function(err, user) {
+            username: req.body.author
+        })
+            .exec(function (err, user) {
                 if (err) return next(err)
                 if (!user) {
-                    return next('user not found:', req.body.author)
+                    return next('user not found:', req.body.author);
                     user = new User({
-                        username: req.body.author,
+                        username: req.body.author
                     });
                     user.save();
                 }
-                var imgs = Object.keys(req.files).map(function(key) {
+                var imgs = Object.keys(req.files).map(function (key) {
                     return path.basename(req.files[key].path)
                 })
                 var post = new Post({
@@ -29,10 +29,10 @@ router.route('/posts')
                     time: new Date(),
                     imgs: imgs,
                 })
-                post.save(function(err, post) {
+                post.save(function (err, post) {
                     if (err) return next(err)
                     post.author = user;
-                    post.imgs = post.imgs.map(function(img) {
+                    post.imgs = post.imgs.map(function (img) {
                         return ['http:/', req.headers.host, 'upload', img].join('/');
                     })
                     res.data = post;
@@ -40,29 +40,23 @@ router.route('/posts')
                 })
             })
     })
-    .get(function(req, res, next) {
+    .get(function (req, res, next) {
         var cond = {}
         if (req.params.before) {
             cond.id = {
                 $lt: req.params.before
             }
         }
-        var limit = req.params.limit || 10
+        var limit = req.query.limit || 10
         Post.find(cond)
+            .sort('-time')
             .limit(limit)
-            .sort('-id')
             .populate('author')
-            .exec(function(err, posts) {
+            .exec(function (err, posts) {
                 if (err) return next(err)
-                res.data = posts.map(function(post) {
-                    return extend(post, {
-                        imgs: post.imgs.map(function(img) {
-                            return ['http:/', req.headers.host, 'upload', img].join('/');
-                        })
-                    })
-                });
+                res.data = posts;
                 next();
-            })
+            });
     })
 
 module.exports = router;
