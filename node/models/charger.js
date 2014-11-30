@@ -58,6 +58,7 @@ DestChargerSchema.set('toJSON', {
     transform: function (doc, ret, options) {
         delete ret._id;
         delete ret.__t;
+        delete ret.__v;
     }
 });
 HomeChargerSchema.set('toJSON', {
@@ -65,6 +66,7 @@ HomeChargerSchema.set('toJSON', {
     transform: function (doc, ret, options) {
         delete ret._id;
         delete ret.__t;
+        delete ret.__v;
     }
 });
 SuperChargerSchema.set('toJSON', {

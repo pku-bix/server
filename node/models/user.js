@@ -6,6 +6,7 @@ var UserSchema = new Schema({
     nickname: String,
     signature: String,
     wechat_id: String,
+    tesla_model: String,
     phone: String,
     avatar: String,
     device_token: String,
