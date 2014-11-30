@@ -39,7 +39,7 @@ function update(filename, constructor) {
     })
 }
 
-Charger.remove({}).exec();
+//Charger.remove({}).exec();
 
 update('superChargers.dat', function (provider) {
     return new SuperCharger({
