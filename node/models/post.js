@@ -21,7 +21,7 @@ var PostSchema = new Schema({
 PostSchema.set('toJSON', {
     getters: true, virtuals: true,
     transform: function (doc, ret, options) {
-        ret.imgs = ret.imgs.map(function (img) {
+        ret.images = ret.images.map(function (img) {
             return '/upload/' + img;
         });
 
