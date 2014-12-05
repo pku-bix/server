@@ -25,7 +25,8 @@
     "request": "^2.44.0",
     "connect-redis": "^2.1.0",
     "connect-multiparty": "^1.2.5",
-    "apn": "^1.6.2"
+    "apn": "^1.6.2",
+    "lwip": "0.0.5"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

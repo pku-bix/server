@@ -9,6 +9,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var str = require(process.cwd() + '/utils/str')
 
 var PostSchema = new Schema({
     author: {type: String, ref: 'User'},
@@ -23,6 +24,10 @@ PostSchema.set('toJSON', {
     transform: function (doc, ret, options) {
         ret.images = ret.images.map(function (img) {
             return '/upload/' + img;
+        });
+
+        ret.thumbnails = ret.images.map(function (img) {
+            return '/upload/' + str.appendName(img, '-64');
         });
 
         delete ret._id;
