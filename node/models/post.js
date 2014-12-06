@@ -9,25 +9,38 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var str = require(process.cwd() + '/utils/str')
+var thumb = require(process.cwd() + '/utils/thumb')
 
 var PostSchema = new Schema({
-    author: {type: String, ref: 'User'},
-    content: {type: String, default: ''},
-    time: {type: Date, default: Date.now},
+    author: {
+        type: String,
+        ref: 'User'
+    },
+    content: {
+        type: String,
+        default: ''
+    },
+    time: {
+        type: Date,
+        default: Date.now
+    },
     images: [String],
-    replies: [{type: String, ref: "Reply"}]
+    replies: [{
+        type: String,
+        ref: "Reply"
+    }]
 });
 
 PostSchema.set('toJSON', {
-    getters: true, virtuals: true,
-    transform: function (doc, ret, options) {
-        ret.images = ret.images.map(function (img) {
+    getters: true,
+    virtuals: true,
+    transform: function(doc, ret, options) {
+        ret.images = ret.images.map(function(img) {
             return '/upload/' + img;
         });
 
-        ret.images_thumbnail = ret.images.map(function (img) {
-            return str.appendName(img, '-64');
+        ret.images_thumbnail = ret.images.map(function(img) {
+            return thumb.thumbPath(img)
         });
 
         delete ret._id;

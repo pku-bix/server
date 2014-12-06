@@ -12,6 +12,7 @@ var path = require('path')
 var fs = require('fs')
 var User = require(process.cwd() + '/models/user')
 var extend = require('util')._extend
+var thumb = require(process.cwd() + '/utils/thumb')
 
 router.route('/user/:username')
     .get(function(req, res, next) {
@@ -22,17 +23,20 @@ router.route('/user/:username')
             .exec(function(err, user) {
                 if (err) return next(err);
                 if (!user) return next('user not found: ' + req.params.username);
-                res.data=user;
+                res.data = user;
                 next();
             })
     })
     .post(function(req, res, next) {
         var patch = req.body;
-        if (req.files.avatar) patch.avatar = path.basename(req.files.avatar.path);
+        if (req.files.avatar) {
+            patch.avatar = path.basename(req.files.avatar.path);
+            thumb.resize(req.files.avatar.path);
+        }
 
         User.update({
-            username: req.params.username
-        }, patch, {
+                username: req.params.username
+            }, patch, {
                 upsert: true // update or insert
             },
             function(err, numberAffected, raw) {

@@ -2,11 +2,10 @@ var router = require('express').Router()
 var User = require(process.cwd() + '/models/user')
 var Post = require(process.cwd() + '/models/post')
 var Reply = require(process.cwd() + '/models/reply')
-var str = require(process.cwd() + '/utils/str')
+var thumb = require(process.cwd() + '/utils/thumb')
 var path = require('path')
 var fs = require('fs')
 var extend = require('util')._extend
-var lwip = require('lwip')
 
 router.route('/posts')
     .post(function(req, res, next) {
@@ -22,22 +21,7 @@ router.route('/posts')
                 }
                 var images = Object.keys(req.files).map(function(key) {
                     var filepath = req.files[key].path;
-                    lwip.open(filepath, function(err, image) {
-                        if (err) {
-                            console.info('could not open image:', err);
-                            return;
-                        }
-                        image.resize(64, 64, function(err, image) {
-                            if (err) {
-                                console.info('resize image error:', err);
-                                return;
-                            }
-                            image.writeFile(str.appendName(filepath, '-64'),
-                                function(err) {
-                                    if (err) console.info('save resized image error:', err)
-                                });
-                        });
-                    });
+                    thumb.resize(filepath);
                     return path.basename(filepath)
                 });
                 var post = new Post({
@@ -53,7 +37,7 @@ router.route('/posts')
     })
     .get(function(req, res, next) {
         var cond = {};
-        if (req.params.before) {
+        if (req.query.before) {
             cond.id = {
                 $lt: req.params.before
             }

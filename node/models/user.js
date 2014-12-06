@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var lwip = require('lwip');
-var str = require(process.cwd() + '/utils/str');
+var thumb = require(process.cwd() + '/utils/thumb');
 
 var UserSchema = new Schema({
     username: String,
@@ -23,7 +23,7 @@ UserSchema.set('toJSON', {
     getters: true, virtuals: true,
     transform: function (doc, ret, options) {
         ret.avatar = '/upload/' + ret.avatar;
-        ret.avatar_thumbnail = str.appendName(ret.avatar, '-64');
+        ret.avatar_thumbnail = thumb.thumbPath(ret.avatar);
         delete ret._id;
     }
 });
