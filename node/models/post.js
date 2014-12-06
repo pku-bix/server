@@ -26,8 +26,8 @@ PostSchema.set('toJSON', {
             return '/upload/' + img;
         });
 
-        ret.thumbnails = ret.images.map(function (img) {
-            return '/upload/' + str.appendName(img, '-64');
+        ret.images_thumbnail = ret.images.map(function (img) {
+            return str.appendName(img, '-64');
         });
 
         delete ret._id;

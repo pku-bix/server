@@ -27,18 +27,16 @@ router.route('/posts')
                             console.info('could not open image:', err);
                             return;
                         }
-                        image.batch()
-                            .resize(64, 64, 'lanczos',
-                                function(err, image) {
-                                    if (err) {
-                                        console.info('resize image error:', err);
-                                        return;
-                                    }
-                                })
-                            .writeFile(str.appendName(filepath, '-64'),
+                        image.resize(64, 64, function(err, image) {
+                            if (err) {
+                                console.info('resize image error:', err);
+                                return;
+                            }
+                            image.writeFile(str.appendName(filepath, '-64'),
                                 function(err) {
                                     if (err) console.info('save resized image error:', err)
-                                })
+                                });
+                        });
                     });
                     return path.basename(filepath)
                 });
