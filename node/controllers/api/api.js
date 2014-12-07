@@ -28,7 +28,7 @@ module.exports = function(app) {
     router.use(errorHandler);
 
 
-    // functions
+    // middle wares
 
     function logRequest(req, res, next) {
         console.log('------------------------------')
