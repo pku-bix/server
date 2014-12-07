@@ -11,21 +11,24 @@ var path = require('path')
 var lwip = require('lwip')
 var fs = require('fs')
 
-module.exports = {
-    appendName: function(opath, str) {
+var thumb = function() {
+    var self = this;
+    this.appendName=function(opath, str) {
         var ext = path.extname(opath);
         var extl = ext.length;
         var length = extl ? -extl : undefined;
 
         return opath.slice(0, length) + str + ext;
-    },
-    thumbPath: function(imagePath) {
-        var thumbPath = this.appendName(imagePath, '-64');
+    };
+
+    this.thumbPath= function(imagePath) {
+        var thumbPath = self.appendName(imagePath, '-64');
         var thumbFilePath = process.cwd() + '/public' + thumbPath;
 
         return fs.existsSync(thumbFilePath) ? thumbPath : imagePath;
-    },
-    resize: function(file) {
+    };
+
+    this.resize= function(file) {
         lwip.open(file, function(err, image) {
             if (err) {
                 console.info('could not open image:', err);
@@ -36,7 +39,7 @@ module.exports = {
                     console.info('resize image error:', err);
                     return;
                 }
-                image.writeFile(str.appendName(filepath, '-64'),
+                image.writeFile(self.appendName(file, '-64'),
                     function(err) {
                         if (err) console.info('save resized image error:', err)
                     });
@@ -44,3 +47,5 @@ module.exports = {
         });
     }
 }
+
+module.exports = new thumb();
