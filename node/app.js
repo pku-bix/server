@@ -54,7 +54,7 @@ app.use(passport.session());
 
 app.use('/', require('./controllers/home'));
 app.use('/api', require('./controllers/api/api')(app));
-app.use('/xmppforward', require('./controllers/xmppforward'));
+//app.use('/xmppforward', require('./controllers/xmppforward'));
 app.use('/admin', authenticate(require('./controllers/admin')))
 
 
@@ -80,7 +80,7 @@ if (app.get('env') === 'development') {
 }
 
 // production error handler
-if (app.get('env') === 'development') {
+if (app.get('env') === 'production') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
