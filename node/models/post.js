@@ -43,6 +43,8 @@ PostSchema.set('toJSON', {
             return thumb.thumbPath(img)
         });
 
+        ret.time = ret.time.toString()
+
         delete ret._id;
         delete ret.__v;
     }

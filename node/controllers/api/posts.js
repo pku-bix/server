@@ -38,13 +38,13 @@ router.route('/posts')
     .get(function(req, res, next) {
         var cond = {};
         if (req.query.before) {
-            cond.id = {
-                $lt: req.params.before
+            cond._id = {
+                $lt: req.query.before
             }
-        }
+        };
         var limit = req.query.limit || 10
         Post.find(cond)
-            .sort('-time')
+            .sort({ _id: -1 })
             .limit(limit)
             .populate('author')
             .exec(function(err, posts) {
