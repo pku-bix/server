@@ -47,7 +47,7 @@ var thumb = function() {
                 });
             });
         } catch (e) {
-            console.info('thumb.resize error:', e)
+            console.info(file, 'resize error:', e)
         }
     }
 }
