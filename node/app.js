@@ -9,6 +9,7 @@ var RedisStore = require('connect-redis')(session);
 var multipart = require('connect-multiparty')
 var Admin = require('./models/admin.js')
 var authenticate = require('./controllers/authenticate.js')
+var cluster = require('cluster');
 
 // mongoose setup
 var mongoose = require('mongoose');
@@ -23,28 +24,47 @@ passport.deserializeUser(Admin.deserializeUser());
 // app setup
 var app = express();
 app.set('env', process.env.NODE_ENV || 'development');
-app.set('views', path.join(__dirname, 'views'));    // dirname where the current file is located
+app.set('port', process.env.PORT || 3000)
+app.set('views', path.join(__dirname, 'views')); // dirname is where the current file is located
 app.set('view engine', 'jade');
 
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(multipart({ uploadDir: __dirname + '/public/upload' })) 
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
+app.use(multipart({
+    uploadDir: __dirname + '/public/upload'
+}))
 app.use(cookieParser());
 
 if (app.get('env') === 'development') {
-  app.use(session({ secret: 'hello! Bix', resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
-  app.use(function(req, res, next){
-    //console.log(req.method, 'REQUEST FROM', req.ip)
-    //console.log('req url:',    req.hostname + req.path)
-    //console.log('headers:', req.headers)
-    //console.log('body:',    req.body)
-    next()
-  })
-}
-else{
-  app.use(session({ secret: 'hello! Bix', store: new RedisStore(), resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }));
+    app.use(session({
+        secret: 'hello! Bix',
+        resave: true,
+        saveUninitialized: true,
+        cookie: {
+            maxAge: 60000
+        }
+    }));
+    app.use(function(req, res, next) {
+        //console.log(req.method, 'REQUEST FROM', req.ip)
+        //console.log('req url:',    req.hostname + req.path)
+        //console.log('headers:', req.headers)
+        //console.log('body:',    req.body)
+        next()
+    })
+} else {
+    app.use(session({
+        secret: 'hello! Bix',
+        store: new RedisStore(),
+        resave: true,
+        saveUninitialized: true,
+        cookie: {
+            maxAge: 60000
+        }
+    }));
 }
 
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
@@ -73,8 +93,8 @@ if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
-            message: err.message, 
-            error: err    // print stacktrace
+            message: err.message,
+            error: err // print stacktrace
         });
     });
 }
@@ -85,9 +105,33 @@ if (app.get('env') === 'production') {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
-            error: {}       // no stacktraces leaked to user
+            error: {} // no stacktraces leaked to user
         });
     });
+}
+
+
+// start a cluster as a monitor
+// restart app.js when crashed
+if (cluster.isMaster) {
+    cluster.fork();
+
+    //if the worker dies, restart it.
+    cluster.on('exit', function(worker) {
+        console.log('Worker ' + worker.id + ' died');
+        console.log('Restarting...');
+        cluster.fork();
+    });
+} else {
+    var server = app.listen(app.get('port'), function() {
+        console.log('Express server listening on port ' + server.address().port);
+    });
+    process.on('uncaughtException', function() {
+        console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
+        console.error(err.stack)
+        //Send some notification about the error  
+        process.exit(1);
+    })
 }
 
 module.exports = app;
