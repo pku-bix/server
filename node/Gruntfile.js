@@ -26,16 +26,12 @@ module.exports = function(grunt) {
             dev: {
                 files: ['app.js', '**/*.js', '!**/node_modules/**'],
                 tasks: ['express:dev'],
-                options: {
-                    spawn: false
-                }
+                options: { spawn: false }
             },
             prod: {
                 files: ['app.js', '**/*.js', '!**/node_modules/**'],
                 tasks: ['express:prod'],
-                options: {
-                    spawn: false
-                }
+                options: { spawn: false }
             }
         }
     });
@@ -45,7 +41,7 @@ module.exports = function(grunt) {
     // https://github.com/gruntjs/grunt-contrib-watch
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('dist', ['express:prod'])
+    grunt.registerTask('dist', ['express:prod', 'watch:prod'])
     grunt.registerTask('default', ['express:dev', 'watch:dev']);
     //grunt.registerTask('test', ['nodemon:dev']);
 }

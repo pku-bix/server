@@ -111,27 +111,26 @@ if (app.get('env') === 'production') {
 }
 
 
-// start a cluster as a monitor
 // restart app.js when crashed
 if (cluster.isMaster) {
+    console.log('master node started, starting worker...')
     cluster.fork();
 
     //if the worker dies, restart it.
     cluster.on('exit', function(worker) {
-        console.log('Worker ' + worker.id + ' died');
-        console.log('Restarting...');
+        console.log('worker', worker.id + '('+worker.process.pid+') died, restarting...');
         cluster.fork();
     });
 } else {
     var server = app.listen(app.get('port'), function() {
-        console.log('Express server listening on port ' + server.address().port);
+        console.log('worker started on port ' + server.address().port);
     });
-    process.on('uncaughtException', function() {
-        console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
-        console.error(err.stack)
-        //Send some notification about the error  
-        process.exit(1);
-    })
 }
+
+process.on('uncaughtException', function(err) {
+    console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
+    console.error(err.stack)
+    process.exit(1);
+});
 
 module.exports = app;
