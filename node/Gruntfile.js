@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     // https://github.com/gruntjs/grunt-contrib-watch
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('server', ['express:prod', 'watch:prod'])
+    grunt.registerTask('dist', ['express:prod'])
     grunt.registerTask('default', ['express:dev', 'watch:dev']);
     //grunt.registerTask('test', ['nodemon:dev']);
 }
