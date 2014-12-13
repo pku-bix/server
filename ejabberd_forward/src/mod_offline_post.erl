@@ -17,36 +17,31 @@
 -include("jlib.hrl").
  
 start(Host, _Opt) -> 
-        ?INFO_MSG("mod_offline_post loading", []),
-        inets:start(),
-        ?INFO_MSG("mod_offline_post HTTP client started", []),
-%%        post_offline_message("testFrom", "testTo", "testBody"),
-        ejabberd_hooks:add(offline_message_hook, Host, ?MODULE, create_message, 10).   
- 
- 
+    ?INFO_MSG("mod_offline_post loading", []),
+    inets:start(),
+    ?INFO_MSG("mod_offline_post HTTP client started", []),
+    post_offline_message("testFrom", "testTo", "testBody"),
+    ejabberd_hooks:add(offline_message_hook, Host, ?MODULE, create_message, 10).   
  
 stop (Host) -> 
-        ?INFO_MSG("mod_offline_post stopping", []),
-        ejabberd_hooks:delete(offline_message_hook, Host, ?MODULE, create_message, 10).
- 
- 
+    ?INFO_MSG("mod_offline_post stopping", []),
+    ejabberd_hooks:delete(offline_message_hook, Host, ?MODULE, create_message, 10).
  
 create_message(_From, _To, Packet) ->
-%%        ?INFO_MSG("mod_offline_post creating message",[]),
-        Type = xml:get_tag_attr_s("type", Packet),
+    Type = xml:get_tag_attr_s("type", Packet),
+    if (Type == "chat") ->
+        ?INFO_MSG("mod_offline_post creating message",[]),
         FromS = xml:get_tag_attr_s("from", Packet),
         ToS = xml:get_tag_attr_s("to", Packet),
         Body = xml:get_path_s(Packet, [{elem, "body"}, cdata]),
-        if (Type == "chat") ->
-            post_offline_message(FromS, ToS, Body)
-        end.
- 
- 
+        post_offline_message(FromS, ToS, Body)
+    end.
  
 post_offline_message(From, To, Body) ->
-%%        ?INFO_MSG("mod_offline_post posting from ~p to ~p body ~p~n",[From, To, Body]),
-         http:request(post, {"http://localhost/xmppforward/offline",[], 
-         "application/x-www-form-urlencoded",
-         lists:concat(["from=", From,"&to=", To,"&body=", Body])}, [], []),
-%%        ?INFO_MSG("mod_offline_post post request sent", []).
+    Url = "http://localhost:3000/xmppforward/offline",
+    ?INFO_MSG("mod_offline_post posting to ~p with:",[Url]),
+    ?INFO_MSG("from ~p to ~p body ~p~n",[From, To, Body]),
+    http:request(post, {Url, [], "application/x-www-form-urlencoded",
+        lists:concat(["from=", From,"&to=", To,"&body=", Body])}, [], []),
+    ?INFO_MSG("mod_offline_post post request sent", []).
 

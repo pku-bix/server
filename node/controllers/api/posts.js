@@ -14,9 +14,7 @@ router.route('/posts')
             })
             .exec(function(err, user) {
                 if (!user) {
-                    user = new User({
-                        username: req.body.author
-                    });
+                    user = new User({ username: req.body.author });
                     user.save();
                 }
 

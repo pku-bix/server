@@ -48,13 +48,6 @@ if (app.get('env') === 'development') {
             maxAge: 60000
         }
     }));
-    app.use(function(req, res, next) {
-        //console.log(req.method, 'REQUEST FROM', req.ip)
-        //console.log('req url:',    req.hostname + req.path)
-        //console.log('headers:', req.headers)
-        //console.log('body:',    req.body)
-        next()
-    })
 } else {
     app.use(session({
         secret: 'hello! Bix',
@@ -72,42 +65,73 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
 
+if (app.get('env') === 'development') {
+    app.use(logRequest);
+    app.use(logResponse);
+}
+
 app.use('/', require('./controllers/home'));
-app.use('/api', require('./controllers/api/api')(app));
-//app.use('/xmppforward', require('./controllers/xmppforward'));
+app.use('/api', require('./controllers/api')(app));
+app.use('/xmppforward', require('./controllers/xmppforward')(app));
 app.use('/admin', authenticate(require('./controllers/admin')))
+
+app.use(notFoundCatcher);
+if (app.get('env') === 'development') {
+    app.use(devErrorHandler);
+} else{
+    app.use(devErrorHandler);
+}
 
 
 // error handlers
 
-// catch 404 
-app.use(function(req, res, next) {
+function notFoundCatcher(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
-});
+};
 
+function devErrorHandler(err, req, res, next) {
+    res.status(err.status || 500);
+    res.send({
+        error: err.message || err || 'unkown error',
+        stack: err.stack || 'no stack info'
+    }) // print stacktrace
+};
 
-// development error handlers
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err // print stacktrace
-        });
-    });
+function prodErrorHandler(err, req, res, next) {
+    res.status(err.status || 500);
+
+    // no stacktraces leaked to user
+    res.send(err.message || err || 'unkown error');
+};
+
+function logRequest(req, res, next) {
+    console.log('------------------------------')
+    console.log('REQUEST')
+    console.log(req.ip, req.method, req.protocol + '://' + req.get('host') + req.originalUrl)
+    console.log(req.body)
+    next();
 }
 
-// production error handler
-if (app.get('env') === 'production') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: {} // no stacktraces leaked to user
-        });
-    });
+function logResponse(req, res, next) {
+    var oldWrite = res.write,
+        oldEnd = res.end;
+    var chunks = [];
+    res.write = function(chunk) {
+        chunks.push(chunk);
+        oldWrite.apply(res, arguments);
+    };
+    res.end = function(chunk) {
+        if (chunk) chunks.push(chunk);
+        var body = Buffer.concat(chunks).toString('utf8');
+
+        console.log('RESPONSE')
+        console.log(body);
+
+        oldEnd.apply(res, arguments);
+    };
+    next();
 }
 
 
@@ -118,7 +142,7 @@ if (cluster.isMaster) {
 
     //if the worker dies, restart it.
     cluster.on('exit', function(worker) {
-        console.log('worker', worker.id + '('+worker.process.pid+') died, restarting...');
+        console.log('worker', worker.id + '(' + worker.process.pid + ') died, restarting...');
         cluster.fork();
     });
 } else {
@@ -128,8 +152,8 @@ if (cluster.isMaster) {
 }
 
 process.on('uncaughtException', function(err) {
-    console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
-    console.error(err.stack)
+    console.error((new Date).toUTCString() + ' uncaughtException found:',
+        err.stack || 'no stack info', 'exiting...')
     process.exit(1);
 });
 
