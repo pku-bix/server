@@ -15,9 +15,6 @@ var DestCharger = require(process.cwd() + '/models/charger').DestCharger
 
 // charger query
 router.get('/chargers', function (req, res, next) {
-    setTimeout(function(){
-throw new Error()
-    })
     Charger.find({},
         {
             'longitude': 1,
