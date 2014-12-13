@@ -11,7 +11,7 @@ var UserSchema = new Schema({
     tesla_model: String,
     phone: String,
     avatar: String,
-    device_token: Buffer,
+    device_token: String,
     share_charger: {type: Boolean, default: false},
     charger: {
         type: String,
